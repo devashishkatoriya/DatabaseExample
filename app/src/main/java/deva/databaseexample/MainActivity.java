@@ -7,18 +7,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText e1,e2;
     private SQLiteDatabase myDatabase;
-    public TextView t3,t4;
     private static final String LOG_TAG = "MainActivityDebug";
 
+    public ListView l1;
+    public ArrayAdapter<String> arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
         e1 = (EditText) findViewById(R.id.editText);
         e2 = (EditText) findViewById(R.id.editText2);
-        t3 = (TextView) findViewById(R.id.textView3);
-        t4 = (TextView) findViewById(R.id.textView4);
+
+        l1 = (ListView) findViewById(R.id.listView);
 
         myDatabase = new BaseHelper(getApplicationContext())
                 .getWritableDatabase();
@@ -73,15 +77,21 @@ public class MainActivity extends AppCompatActivity {
     {
         Log.d(LOG_TAG,"At read");
         Cursor cursor = myQuery(null,null);
-        try {
+        try
+        {
             if (cursor.moveToFirst())                       //Check if cursor is not NULL
             {
-                do {
+                Vector<String> StringArray = new Vector<String>();
+                do
+                {
                     Log.d(LOG_TAG, "Got id " + cursor.getString(0));
-                    t3.setText("" + cursor.getString(1));
-                    t4.setText("" + cursor.getInt(2));
+
+                    StringArray.addElement("" + cursor.getString(1));
+                    StringArray.addElement("" + cursor.getString(2));
 
                 } while (cursor.moveToNext());
+                arrayAdapter = new ArrayAdapter<String>(this,R.layout.activity_listview,StringArray);
+                l1.setAdapter(arrayAdapter);
             }
         }
         catch (Exception e)
