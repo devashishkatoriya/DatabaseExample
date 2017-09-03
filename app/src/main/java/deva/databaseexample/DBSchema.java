@@ -3,7 +3,8 @@ package deva.databaseexample;
 /*
  * Created by Devashish Katoriya on 10/13/16.
  */
-public class DBSchema {
+public class DBSchema
+{
 
     public static final class Table
     {

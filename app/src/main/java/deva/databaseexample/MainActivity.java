@@ -60,6 +60,14 @@ public class MainActivity extends AppCompatActivity {
                 read();
             }
         });
+
+        Button delete_button = (Button) findViewById(R.id.button4);
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteEntry();
+            }
+        });
         Log.d(LOG_TAG,"onCreate finished");
     }
 
@@ -67,9 +75,12 @@ public class MainActivity extends AppCompatActivity {
     {
         Log.d(LOG_TAG,"At write");
         ContentValues values = getContentValues();
-        myDatabase.insert(DBSchema.Table.TNAME,null,values);
+        long row_id = myDatabase.insert(DBSchema.Table.TNAME,null,values);              // returns row id of newly inserted row otherwise -1 if error
 
-        Toast.makeText(MainActivity.this, "Submitted Successfully!", Toast.LENGTH_SHORT).show();
+        if(row_id==-1)
+            Toast.makeText(MainActivity.this, "Insertion Error.", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(MainActivity.this, "Successfully added!", Toast.LENGTH_SHORT).show();
         Log.d(LOG_TAG,"write finished");
     }
 
@@ -130,14 +141,25 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG,"At updateEntry");
         String nameString = e1.getText().toString();
         ContentValues values = getContentValues();
-        myDatabase.update(DBSchema.Table.TNAME,values,
-                DBSchema.Table.Cols.Phone_NO + " = ?",
-                new String[] {nameString});
+        int count = myDatabase.update(DBSchema.Table.TNAME,values,
+                DBSchema.Table.Cols.Person_NAME + " = ?",
+                new String[] {nameString});                         //returns number of affected rows
 
-        Toast.makeText(MainActivity.this, "Updated Successfully!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, count + " rows updated successfully!", Toast.LENGTH_SHORT).show();
         Log.d(LOG_TAG,"updateEntry finished");
     }
 
+    private void deleteEntry()
+    {
+        Log.d(LOG_TAG,"At deleteEntry");
+        String nameString = e1.getText().toString();
+        int count = myDatabase.delete(DBSchema.Table.TNAME,
+                DBSchema.Table.Cols.Person_NAME + " = ?",
+                new String[] {nameString});                         //returns number of affected rows
+
+        Toast.makeText(MainActivity.this, count + " rows deleted successfully!", Toast.LENGTH_SHORT).show();
+        Log.d(LOG_TAG,"deleteEntry finished");
+    }
 
     private ContentValues getContentValues()            //Packs up info and forms a single row
     {
